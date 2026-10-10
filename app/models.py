@@ -36,7 +36,7 @@ class User(Base):
     role = Column(Enum(UserRole), nullable=False, default=UserRole.customer)
     is_active = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    provider-profile = relationship(
+    provider_profile = relationship(
         "ProviderProfile", back_populates="user", uselist=False, cascade="all, delete-orphan"
     )
     requests = relationship(

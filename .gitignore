@@ -1,2 +1,4 @@
 fixtrail/
 .env
+__pycache__/
+*.pyc
