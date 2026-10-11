@@ -1,28 +1,45 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.database import Base,engine
-from app.routers import auth
+from app.database import Base, SessionLocal, engine
+from app.models import Category
+from app.routers import auth, categories, service_requests
 
 Base.metadata.create_all(bind=engine)
+
+
+def seed_categories():
+    db = SessionLocal()
+    try:
+        for name in ["Plumbing", "Electrical", "Appliance Repair", "Computer Repair"]:
+            if not db.query(Category).filter(Category.name == name).first():
+                db.add(Category(name=name))
+        db.commit()
+    finally:
+        db.close()
+
+
+seed_categories()
 
 app = FastAPI(title="FixTrail API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://127.0.0.1:3000",
-    "http://localhost:3000", 
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
-    "http://127.0.0.1:8001",
-    "http://localhost:8001",],
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+        "http://127.0.0.1:8001",
+        "http://localhost:8001",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 app.include_router(auth.router)
+app.include_router(categories.router)
+app.include_router(service_requests.router)
+
 
 @app.get("/health")
 def health_check():
