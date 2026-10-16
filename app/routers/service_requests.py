@@ -28,9 +28,15 @@ class RequestOut(BaseModel):
     location: Optional[str]
     status: str
     created_at: datetime
+    # filled in once a provider has accepted the request
+    provider_name: Optional[str] = None
+    provider_phone: Optional[str] = None
+    status_updated_at: Optional[datetime] = None
 
 
 def to_out(r: ServiceRequest) -> RequestOut:
+    job = r.job
+    provider_user = job.provider.user if job and job.provider else None
     return RequestOut(
         id=r.id,
         category_id=r.category_id,
@@ -39,8 +45,11 @@ def to_out(r: ServiceRequest) -> RequestOut:
         photo_url=r.photo_url,
         location=r.location,
         # a request has no status until a provider takes it and a job exists
-        status=r.job.status.value if r.job else "Requested",
+        status=job.status.value if job else "Requested",
         created_at=r.created_at,
+        provider_name=provider_user.full_name if provider_user else None,
+        provider_phone=provider_user.phone if provider_user else None,
+        status_updated_at=job.updated_at if job else None,
     )
 
 

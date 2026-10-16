@@ -3,7 +3,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
-    Column, String, Boolean, DateTime, ForeignKey, Text, Enum, Float, Integer
+    Column, String, Boolean, DateTime, ForeignKey, Text, Enum, Float, Integer,
+    UniqueConstraint
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
@@ -109,3 +110,11 @@ class Review(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     job = relationship("Job", back_populates="review")
     reviewer = relationship("User", back_populates="reviews_written")
+
+class RequestDecline(Base):
+    __tablename__ = "request_declines"
+    id = Column(UUID(as_uuid=False), primary_key=True, default=gen_uuid)
+    request_id = Column(UUID(as_uuid=False), ForeignKey("service_requests.id"), nullable=False)
+    provider_id = Column(UUID(as_uuid=False), ForeignKey("provider_profiles.id"), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    __table_args__ = (UniqueConstraint("request_id", "provider_id"),)

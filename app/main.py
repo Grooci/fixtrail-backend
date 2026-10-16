@@ -5,6 +5,9 @@ from app.database import Base, SessionLocal, engine
 from app.models import Category
 from app.routers import auth, categories, service_requests
 
+from app.routers import provider_jobs
+from app.routers import provider_profile
+
 Base.metadata.create_all(bind=engine)
 
 
@@ -39,7 +42,8 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(service_requests.router)
-
+app.include_router(provider_jobs.router)
+app.include_router(provider_profile.router)
 
 @app.get("/health")
 def health_check():
