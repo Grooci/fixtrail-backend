@@ -8,6 +8,11 @@ from app.routers import auth, categories, service_requests
 from app.routers import provider_jobs
 from app.routers import provider_profile
 
+from app.routers import reviews
+from app.routers import dashboard
+from app.routers import history
+from app.routers import providers
+
 Base.metadata.create_all(bind=engine)
 
 
@@ -44,6 +49,10 @@ app.include_router(categories.router)
 app.include_router(service_requests.router)
 app.include_router(provider_jobs.router)
 app.include_router(provider_profile.router)
+app.include_router(reviews.router)
+app.include_router(dashboard.router)
+app.include_router(history.router)
+app.include_router(providers.router)
 
 @app.get("/health")
 def health_check():

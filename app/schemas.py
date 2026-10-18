@@ -36,3 +36,85 @@ class TokenPayload(BaseModel):
     sub: str
     role: str
     exp: int
+
+class ReviewCreate(BaseModel):
+    job_id: str
+    rating: int = Field(..., ge=1, le=5)
+    comment: Optional[str] = Field(None, max_length=1000)
+
+class ReviewOut(BaseModel):
+    id: str
+    job_id: str
+    reviewer_id: str
+    reviewer_name: str
+    rating: int
+    comment: Optional[str]
+    created_at: datetime
+
+class ProviderReviewsOut(BaseModel):
+    average_rating: float
+    total_reviews: int
+    reviews: list[ReviewOut]
+
+class RequestSummary(BaseModel):
+    request_id: str
+    description: str
+    category_name: Optional[str]
+    status: str
+    provider_name: Optional[str]
+    job_id: Optional[str]
+    has_review: bool
+    created_at: datetime
+
+class CustomerDashboardOut(BaseModel):
+    total_requests: int
+    counts: dict[str, int]
+    recent: list[RequestSummary]
+
+class ProviderJobSummary(BaseModel):
+    job_id: str
+    request_id: str
+    description: str
+    category_name: Optional[str]
+    customer_name: str
+    location: Optional[str]
+    status: str
+    updated_at: datetime
+
+class ProviderDashboardOut(BaseModel):
+    available_requests: int
+    active_jobs: int
+    completed_jobs: int
+    average_rating: float
+    total_reviews: int
+    active: list[ProviderJobSummary]
+    recent_reviews: list[ReviewOut]
+
+class CustomerHistoryOut(BaseModel):
+    total: int
+    items: list[RequestSummary]
+
+class ProviderHistoryItem(BaseModel):
+    job_id: str
+    request_id: str
+    description: str
+    category_name: Optional[str]
+    customer_name: str
+    status: str
+    rating: Optional[int]
+    created_at: datetime
+    updated_at: datetime
+
+class ProviderHistoryOut(BaseModel):
+    total: int
+    items: list[ProviderHistoryItem]
+
+class ProviderPublicOut(BaseModel):
+    id: str
+    name: str
+    bio: Optional[str]
+    service_area: Optional[str]
+    is_available: bool
+    average_rating: float
+    total_reviews: int
+    categories: list[str]
